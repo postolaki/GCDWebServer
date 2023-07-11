@@ -41,10 +41,18 @@ function formatFileSize(bytes) {
   return (bytes / 1000).toFixed(2) + ' KB';
 }
 
+//function _showError(message, textStatus, errorThrown) {
+//  $("#alerts").prepend(tmpl("template-alert", {
+//    level: "danger",
+//    title: (errorThrown != "" ? errorThrown : textStatus) + ": ",
+//    description: message
+//  }));
+//}
 function _showError(message, textStatus, errorThrown) {
-  $("#alerts").prepend(tmpl("template-alert", {
+    $("#alerts").empty();
+    $("#alerts").prepend(tmpl("template-alert", {
     level: "danger",
-    title: (errorThrown != "" ? errorThrown : textStatus) + ": ",
+    title: "",
     description: message
   }));
 }
@@ -68,6 +76,7 @@ function _reload(path) {
     }
     return;
   }
+    $("#alerts").empty();
   
   _disableReloads();
   $.ajax({
@@ -76,7 +85,8 @@ function _reload(path) {
     data: {path: path},
     dataType: 'json'
   }).fail(function(jqXHR, textStatus, errorThrown) {
-    _showError("Failed retrieving contents of \"" + path + "\"", textStatus, errorThrown);
+//    _showError("Failed retrieving contents of \"" + path + "\"", textStatus, errorThrown);
+    _showError("Please make sure that you are on wi-fi screen", textStatus, errorThrown);
   }).done(function(data, textStatus, jqXHR) {
     var scrollPosition = $(document).scrollTop();
     
@@ -235,7 +245,7 @@ $(document).ready(function() {
     fail: function(e, data) {
       var file = data.files[0];
       if (data.errorThrown != "abort") {
-        _showError("Failed uploading \"" + file.name + "\" to \"" + _path + "\"", data.textStatus, data.errorThrown);
+        _showError("Failed uploading \"" + file.name + "\"", data.textStatus, data.errorThrown);
       }
     },
     
@@ -271,7 +281,7 @@ $(document).ready(function() {
         data: {path: _path + name},
         dataType: 'json'
       }).fail(function(jqXHR, textStatus, errorThrown) {
-        _showError("Failed creating folder \"" + name + "\" in \"" + _path + "\"", textStatus, errorThrown);
+        _showError("Failed creating folder \"" + name + "\"", textStatus, errorThrown);
       }).always(function() {
         _reload(_path);
       });
@@ -300,7 +310,7 @@ $(document).ready(function() {
         data: {oldPath: oldPath, newPath: newPath},
         dataType: 'json'
       }).fail(function(jqXHR, textStatus, errorThrown) {
-        _showError("Failed moving \"" + oldPath + "\" to \"" + newPath + "\"", textStatus, errorThrown);
+        _showError("Failed moving \"" + oldPath + "\"", textStatus, errorThrown);
       }).always(function() {
         _reload(_path);
       });
